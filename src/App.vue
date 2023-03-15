@@ -5,92 +5,112 @@ export default {
     return {
       word: true,
       page: false,
+      
 
 
       ///////////////////////
-    //   questions: [
-    //   {
-    //     question: "Que signifie PHP?",
-    //     choice1: "Personal Home Page Hypertext Preprocessor", 
-    //     choice2: "Pretext Hypertext Processor", 
-    //     choice3: "Preprocessor Home Page", 
-    //     choice4: "Pretext Hypertext Processor",
-    //     answer: 1
-    //   },
-    //   {
-    //     question: "Les fichiers PHP ont l’extension …. ?",
-    //     choice1: ".html", 
-    //     choice2: ".xml", 
-    //     choice3: ".php", 
-    //     choice4: ".ph",
-    //     answer: 3
-    //   },
-    //   {
-    //     question: "Un script PHP devrait commencer par ___ ?",
-    //     choice1: "<php", 
-    //     choice2: "<?", 
-    //     choice3: "<?php", 
-    //     choice4: "php",
-    //     answer: 3
-    //   },
-    //   {
-    //     question: "Quelle version de PHP a introduit Try/catch Exception?",
-    //     choice1: "PHP 4", 
-    //     choice2: "PHP 5", 
-    //     choice3: "PHP 5.3", 
-    //     choice4: "PHP 7.2",
-    //     answer: 2
-    //   },
-    //   {
-    //     question: "Les espaces de noms ou « namespaces » sont disponibles depuis quelle version ?",
-    //     choice1: "PHP 4", 
-    //     choice2: "PHP 5", 
-    //     choice3: "PHP 5.3", 
-    //     choice4: "PHP 6",
-    //     answer: 4
-    //   }
-    // ],
+      questions: [
+      {
+        question: "Que signifie PHP?",
+        choice1: "Personal Home Page Hypertext Preprocessor", 
+        choice2: "Pretext Hypertext Processor", 
+        choice3: "Preprocessor Home Page", 
+        choice4: "Pretext Hypertext Processor",
+        answer: 1
+      },
+      
+     
+     
+      {
+        question: "Les espaces de noms ou « namespaces » sont disponibles depuis quelle version ?",
+        choice1: "PHP 4", 
+        choice2: "PHP 5", 
+        choice3: "PHP 5.3", 
+        choice4: "PHP 6",
+        answer: 4
+      },
+      {
+        question: "qustion",
+        choice1: "answer", 
+        choice2: "false", 
+        choice3: "false", 
+        choice4: "false",
+        answer: 1
+      }
+    ],
     // currentQuestion: null,
-    // selectedAnswer: null,
-    // correctAnswers: 0,
-
-
-  //////////////////
+    selectedAnswer: null,
+    correctAnswers: 0,
+    conteur:0,
+    btn:true,
+  questionlist:true,
+  showButton:false,
+  progress: 0,
 
 
     }
   },
+  computed:{
+    initial(){
+      return (1/this.questions.length)*100;
+    }
+  },
+  created(){
+    this.progress=this.initial
+  },
   methods: {
+    
     changeValue() {
-      this.word = !this.word;
-      this.page = !this.page;
+
     },
 
-    // generateQuestion() {
-    //   // Pick a random question that hasn't been asked yet
-    //   const availableQuestions = this.questions.filter(q => q !== this.currentQuestion);
-    //   this.currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-    //   this.selectedAnswer = null; // Reset the selected answer
-    // },
-    // checkAnswer() {
-    //   if (this.selectedAnswer === this.currentQuestion.answer) {
-    //     this.correctAnswers++;
-    //   }
-    //   this.generateQuestion(); // Generate the next question
-    // }
+    generateQuestion() {
+      this.word = !this.word;
+      this.page = !this.page;
+      // const availableQuestions = this.questions.filter(q => q !== this.currentQuestion);
+      // this.currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+      // this.selectedAnswer = null; 
+    },
+    generateQuestion1() {
+      const availableQuestions = this.questions.filter(q => q !== this.currentQuestion);
+      this.currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+      this.selectedAnswer = null; 
+      this.conteur++;
+      this.progress += this.initial;
+      console.log(this.conteur);
+      // return this.conteur;
+    },
+    combinedmethod(){
 
+      this.generateQuestion();
+      this.generateQuestion1();
 
+    },
+    checkAnswer() {
+      this.showButton = !this.showButton;
+      if (this.selectedAnswer === this.currentQuestion.answer) {
+        this.correctAnswers++;
+        console.log(this.correctAnswers);
+        
+      }
+      
+      this.generateQuestion1(); // Generate the next question
+    },
+
+    showresult(){
+      // this.result==true;
+    // this.questionlist==null;
+    if (this.selectedAnswer === this.currentQuestion.answer) {
+        this.correctAnswers++;
+        console.log(this.correctAnswers);
+      }
+    this.questionlist = !this.questionlist;
+    this.btn = !this.btn;
+    
+    
+    }
   }
 };
-
-
-
-
-
-
-
-
-
 
   </script>
 
@@ -106,7 +126,7 @@ export default {
         <li>Les questions s'affichent dans un ordre aléatoire. Vous ferez de nouvelles découvertes à chaque fois!</li>
         <li>Si vous êtes prêt, cliquez sur start quiz</li>
     </ul>
-    <button @click="changeValue" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+    <button @click="combinedmethod" v-if="currentQuestion == null" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
   <span>start quiz</span>
 </button>
 </section>
@@ -120,30 +140,38 @@ export default {
 
 <div >
   <form>
-    <div v-if="currentQuestion">
+    <div v-if="currentQuestion,questionlist" >
+   
       <p>{{ currentQuestion.question }}</p>
-      <label><input type="radio" v-model="selectedAnswer" :value="1">{{ currentQuestion.choice1 }}</label><br>
-      <label><input type="radio" v-model="selectedAnswer" :value="2">{{ currentQuestion.choice2 }}</label><br>
-      <label><input type="radio" v-model="selectedAnswer" :value="3">{{ currentQuestion.choice3 }}</label><br>
-      <label><input type="radio" v-model="selectedAnswer" :value="4">{{ currentQuestion.choice4 }}</label><br>
-      <button type="button" @click="checkAnswer">Submit</button>
-    </div>
-    <div v-else>
-      <p>Congratulations! You have completed the quiz.</p>
-    </div>
-  </form>
-  <button type="button" @click="generateQuestion" v-if="currentQuestion == null">Start Quiz</button>
-  <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center" @click="changeValue" >exit Quiz</button>
-<button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">next question</button>
-<button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">show your Result</button>
+      <label><input type="radio" @focus="showButton = true" v-model="selectedAnswer" :value="1">{{ currentQuestion.choice1 }}</label><br>
+      <label><input type="radio" @focus="showButton = true" v-model="selectedAnswer" :value="2">{{ currentQuestion.choice2 }}</label><br>
+      <label><input type="radio" @focus="showButton = true" v-model="selectedAnswer" :value="3">{{ currentQuestion.choice3 }}</label><br>
+      <label><input type="radio" @focus="showButton = true" v-model="selectedAnswer" :value="4">{{ currentQuestion.choice4 }}</label><br>
+      <!-- <div class="progress">
+        <div class="progress-bar" role="progressbar"  :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100"></div>
+      </div> -->
+
+      
+<div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+  <div class="bg-blue-600 h-2.5 rounded-full" :style="{width: progress + '%'}"></div>
 </div>
 
 
 
+    </div>
+    <div v-else>
+      <p>Congratulations! You have completed the quiz. with result {{ correctAnswers }}/{{questions.length}}</p>
+    </div>
+  </form>
+  <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center" type="button" @click="generateQuestion" v-if="currentQuestion == null">Start Quiz</button>
+  <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center" @click="changeValue" >exit Quiz</button>
+
+<button v-if="conteur < questions.length-1" @click="checkAnswer" v-show="showButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">next question</button>
+
+<button v-else-if="btn" @click="showresult"  class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">show your Result</button>
+</div>
+
 </section>
-
-
-
 </template>
 
 <style scoped>
